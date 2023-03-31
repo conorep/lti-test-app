@@ -1,0 +1,61 @@
+{
+  "title":"Guided Practice",
+  "description":"LTI 1.3 Test Tool used for GP dev purposes",
+  "oidc_initiation_url":"https://cobrien2.greenriverdev.com/whalesong/oidc_login",
+  "target_link_uri":"https://cobrien2.greenriverdev.com/whalesong/",
+  "scopes":[
+    "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem",
+    "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly",
+	"https://purl.imsglobal.org/spec/lti-ags/scope/score"
+  ],
+  "extensions":[
+    {
+      "domain":"cobrien2.greenriverdev.com",
+      "tool_id":"guided-practice",
+      "platform":"canvas.instructure.com",
+      "privacy_level":"public",
+      "settings":{
+        "text":"Launch Guided Practice Tool",
+        "icon_url":"https://cobrien2.greenriverdev.com/whalesong/toolicon/orcas-logo.png",
+        "selection_height": 800,
+        "selection_width": 800,
+        "placements":[
+          {
+            "text":"User Navigation Placement",
+			"enabled": true,
+            "icon_url":"https://cobrien2.greenriverdev.com/whalesong/toolicon/orcas-logo.png",
+            "placement":"user_navigation",
+            "message_type":"LtiResourceLinkRequest",
+            "target_link_uri":"https://cobrien2.greenriverdev.com/whalesong/coursenav",
+            "canvas_icon_class":"icon-lti",
+            "custom_fields":{
+              "foo":"$Canvas.user.id"
+            }
+          },
+          {
+            "text":"Editor Button Placement",
+			"enabled": true,
+            "icon_url":"https://cobrien2.greenriverdev.com/whalesong/toolicon/orcas-logo.png",
+            "placement":"editor_button",
+            "message_type":"LtiDeepLinkingRequest",
+            "target_link_uri":"https://cobrien2.greenriverdev.com/whalesong/editorbutton",
+            "selection_height": 500,
+            "selection_width": 500
+          },
+		  {  
+		    "text":"Embed Tool Content as a Canvas Assignment",
+		    "enabled":true,
+		    "icon_url":"https://cobrien2.greenriverdev.com/whalesong/toolicon/orcas-logo.png",
+		    "placement":"assignment_selection",
+		    "message_type":"LtiDeepLinkingRequest",
+		    "target_link_uri":"https://cobrien2.greenriverdev.com/whalesong/assignmentlink"
+		   }
+        ]
+      }
+    }
+  ],
+  "public_jwk_url": "https://cobrien2.greenriverdev.com/whalesong/pub_jwk/pubkey.key",
+  "custom_fields":{
+    "bar":"$Canvas.user.sisid"
+  }
+}
