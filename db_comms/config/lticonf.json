@@ -6,7 +6,10 @@
   "scopes":[
     "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem",
     "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly",
-	"https://purl.imsglobal.org/spec/lti-ags/scope/score"
+    "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly",
+	"https://purl.imsglobal.org/spec/lti-ags/scope/score",
+    "https://canvas.instructure.com/lti-ags/progress/scope/show",
+    "https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly"
   ],
   "extensions":[
     {
@@ -54,7 +57,7 @@
       }
     }
   ],
-  "public_jwk_url": "https://cobrien2.greenriverdev.com/whalesong/pub_jwk/pubkey.key",
+  "public_jwk_url": "https://cobrien2.greenriverdev.com/whalesong/pub_jwk/public.key",
   "custom_fields":{
     "bar":"$Canvas.user.sisid"
   }
