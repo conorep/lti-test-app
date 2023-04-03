@@ -1,0 +1,1 @@
+regconfig.json is just a record of what should be used for the current codespace deployment

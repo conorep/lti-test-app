@@ -1,0 +1,8 @@
+{
+  "url": "https://canvas.instructure.com",
+  "name": "Canvas",
+  "clientId": "10000000000010",
+  "auth_login_url":"https://conorep-supreme-capybara-r44vrqw9rjh6px-3000.preview.app.github.dev/api/lti/authorize_redirect",
+  "auth_token_url":"https://conorep-supreme-capybara-r44vrqw9rjh6px-3000.preview.app.github.dev/login/oauth2/token",
+  "key_set_url": "https://conorep-supreme-capybara-r44vrqw9rjh6px-3000.preview.app.github.dev/api/lti/security/jwks"
+}
