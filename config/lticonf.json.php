@@ -1,8 +1,11 @@
+<?php
+    header('Content-Type: application/json; charset=UTF-8');
+    ?>
 {
-  "title":"Guided Practice",
+  "title":"GP - WhaleSong",
   "description":"LTI 1.3 Test Tool used for GP dev purposes",
-  "oidc_initiation_url":"https://cobrien2.greenriverdev.com/whalesong/oidc_login",
-  "target_link_uri":"https://cobrien2.greenriverdev.com/whalesong/",
+  "oidc_initiation_url":"https://cobrien2.greenriverdev.com/whalesong/oidc_login/index.php",
+  "target_link_uri":"https://cobrien2.greenriverdev.com/whalesong/oidc_login/index.php",
   "scopes":[
     "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem",
     "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly",
@@ -24,41 +27,41 @@
         "selection_width": 800,
         "placements":[
           {
-            "text":"User Navigation Placement",
+            "text":"Guided Practice - Course Nav",
 			"enabled": true,
             "icon_url":"https://cobrien2.greenriverdev.com/whalesong/toolicon/orcas-logo.png",
-            "placement":"user_navigation",
+            "placement":"course_navigation",
             "message_type":"LtiResourceLinkRequest",
-            "target_link_uri":"https://cobrien2.greenriverdev.com/whalesong/coursenav",
+            "target_link_uri":"https://cobrien2.greenriverdev.com/whalesong/pages/coursenav/index.php",
             "canvas_icon_class":"icon-lti",
             "custom_fields":{
-              "foo":"$Canvas.user.id"
+              "canvas_course_id":"$Canvas.user.id"
             }
           },
           {
-            "text":"Editor Button Placement",
+            "text":"Guided Practice - Editor",
 			"enabled": true,
             "icon_url":"https://cobrien2.greenriverdev.com/whalesong/toolicon/orcas-logo.png",
             "placement":"editor_button",
             "message_type":"LtiDeepLinkingRequest",
-            "target_link_uri":"https://cobrien2.greenriverdev.com/whalesong/editorbutton",
+            "target_link_uri":"https://cobrien2.greenriverdev.com/whalesong/pages/editorbutton/index.php",
             "selection_height": 500,
             "selection_width": 500
           },
-		  {  
-		    "text":"Embed Tool Content as a Canvas Assignment",
+		  {
+		    "text":"Guided Practice - Assignment",
 		    "enabled":true,
 		    "icon_url":"https://cobrien2.greenriverdev.com/whalesong/toolicon/orcas-logo.png",
 		    "placement":"assignment_selection",
 		    "message_type":"LtiDeepLinkingRequest",
-		    "target_link_uri":"https://cobrien2.greenriverdev.com/whalesong/assignmentlink"
+		    "target_link_uri":"https://cobrien2.greenriverdev.com/whalesong/pages/assignmentlink/index.php"
 		   }
         ]
       }
     }
   ],
-  "public_jwk_url": "https://cobrien2.greenriverdev.com/whalesong/pub_jwk/public.key",
+  "public_jwk_url": "https://cobrien2.greenriverdev.com/whalesong/db_comms/keys/public.key",
   "custom_fields":{
-    "bar":"$Canvas.user.sisid"
+    "canvas_course_id":"$Canvas.user.sisid"
   }
 }
