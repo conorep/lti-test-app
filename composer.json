@@ -1,6 +1,7 @@
 {
     "require": {
         "packbackbooks/lti-1p3-tool": "^5.3",
-        "ext-curl": "*"
+        "ext-curl": "*",
+        "ramsey/uuid": "^4.7"
     }
 }
