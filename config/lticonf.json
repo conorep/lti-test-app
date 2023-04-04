@@ -2,7 +2,7 @@
   "title":"GP WhaleSong",
   "description":"LTI 1.3 Test Tool used for GP dev purposes",
   "oidc_initiation_url":"https://cobrien2.greenriverdev.com/whalesong/oidc_login/index.php",
-  "target_link_uri":"https://cobrien2.greenriverdev.com/whalesong/oidc_login/index.php",
+  "target_link_uri":"https://cobrien2.greenriverdev.com/whalesong/oidc_login/authLogin.php",
   "scopes":[
     "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem",
     "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly",
