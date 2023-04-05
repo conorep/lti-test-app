@@ -5,21 +5,15 @@
 	use Ramsey\Uuid\Uuid;
 	use Firebase\JWT\JWT;
 	use GuzzleHttp\Client;
-	use GuzzleHttp\Promise;
-	use GuzzleHttp\Exception;
-	
-	if(empty(session_id()))
-	{
-		session_start();
-	}
-    header('Access-Control-Allow-Origin: *');
-    header('Access-Control-Allow-Headers: X-Requested-With, Content-Type, Origin, Cache-Control, Pragma, Authorization, Accept, Accept-Encoding');
-    header('Access-Control-Allow-Methods: POST, GET');
-//    header('Content-type:  text/html');
-	
-	// The JWT library makes use of a leeway (in seconds) to account for when there is a clock skew times between
-	// the signing and verifying servers
-	
+    include __DIR__ . '/../helper/helperfunctions.php';
+
+    sessionStuff();
+    if (isset($_POST['access_token']))
+    {
+        setcookie('oauthcodeLTI', $_POST['code'],
+            ['domain' => 'cobrien2.greenriverdev.com', 'secure' => true, 'samesite' => 'None']);
+    }
+
 	// URL to post info to
 	$tokenUrl = "https://conorep-zany-cod-pqq64gxvjjgfrjv9-3000.preview.app.github.dev/login/oauth2/token";
 
@@ -36,7 +30,6 @@
             {
                 JWT::$leeway = 20;
 				$newUuid = (string)Uuid::uuid4();
-				setcookie('newUuid', $newUuid, ['domain'=>'cobrien2.greenriverdev.com', 'secure'=>true,'samesite'=>'None']);
 
                 $idToken = $_POST['id_token'];
                 $authToken = $_POST['authenticity_token'];
@@ -65,43 +58,44 @@
 				$jwt = JWT::encode($payload,  $getPrivKey, 'RS256');
 //				echo 'JWT: ' . $jwt;
 				
-                $tokenAssertion = array
-                    (
+                $tokenAssertion =
+                    [
                         "grant_type" => "client_credentials",
                         "client_assertion_type" => "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
                         "client_assertion" => $jwt,
                         "scope" => "https://purl.imsglobal.org/spec/lti-ags/lineitem https://purl.imsglobal.org/spec/lti-ags/result/read",
-						"redirect_uri" => "https://cobrien2.greenriverdev.com/whalesong/pages/coursenav/index.ph"
-                    );
-				
-				$options = array
-				(
-					'headers' => ['Content-Type' => 'application/x-www-form-urlencoded'],
-					'form_params' => $tokenAssertion,
-					'debug' => true
-				);
-				
-				
-//				$tokenUrl .=
-//					'?grant_type=client_credentials'.
-//					'&client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer'.
-//					'&client_assertion='.$jwt.
-//					'&scope=https://purl.imsglobal.org/spec/lti-ags/lineitem,https://purl.imsglobal.org/spec/lti-ags/result/read';
-				
+                    ];
+
+                $headers =
+                    [
+                        'Content-Type' => 'application/x-www-form-urlencoded',
+                        'Accept' => 'application/json'
+                    ];
+				$body =
+				    [
+					'form_params' => $tokenAssertion
+				    ];
+
 				$client = new Client();
-//				$res =$client->request('GET', $tokenUrl, $options);
-//				die();
-//				var_dump($res->getHeaders());
-//				echo '<br/>';
-//				var_dump($res->getStatusCode());
-//				echo '<br/>';
-//				var_dump($res->getBody());
-				$req = new Request('POST', $tokenUrl, $options);
-				$promise = $client->sendAsync($req)->then(function($response)
-				{
-					print_r($response->getBody());
-				});
-				var_dump ($promise->wait(true));
+
+				$req = new Request('POST', $tokenUrl, [
+                    'allow_redirects' => [
+                        'max'             => 10,
+                        'referer'         => true
+                    ]
+                ]);
+				$response = $client->sendAsync($req, [$headers, $tokenAssertion]);
+                $response->then(
+                    function($res)
+                    {
+                        echo $res;
+                    }
+                );
+                $response->wait(true);
+                var_dump($response);
+//                echo $response->getBody();
+//                $resBody = (string)$response->getBody();
+//                var_dump($resBody);
             } else
             {
                 die("ERROR. NO ID TOKEN!");

@@ -36,16 +36,6 @@
             }
           },
           {
-            "text":"Guided Practice - Editor",
-            "enabled": true,
-            "icon_url":"https://cobrien2.greenriverdev.com/whalesong/toolicon/orcas-logo.png",
-            "placement":"editor_button",
-            "message_type":"LtiDeepLinkingRequest",
-            "target_link_uri":"https://cobrien2.greenriverdev.com/whalesong/pages/editorbutton/index.php",
-            "selection_height": 500,
-            "selection_width": 500
-          },
-          {
             "text":"Guided Practice - Assignment",
             "enabled":true,
             "icon_url":"https://cobrien2.greenriverdev.com/whalesong/toolicon/orcas-logo.png",

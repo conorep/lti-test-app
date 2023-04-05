@@ -1,13 +1,14 @@
 <?php
 	require_once __DIR__ . '/../vendor/autoload.php';
-	if(empty(session_id()))
-	{
-		session_start();
-	}
-    header('Access-Control-Allow-Origin: *');
-    header('Access-Control-Allow-Headers: X-Requested-With, Content-Type, Origin, Cache-Control, Pragma, Authorization, Accept, Accept-Encoding');
-    header('Access-Control-Allow-Methods: POST, GET');
-//    header('Content-type:  text/html');
+    include __DIR__ . '/../helper/helperfunctions.php';
+    sessionStuff();
+    if (isset($_POST['access_token']))
+    {
+        setcookie('oauthcodeLTI', $_POST['code'],
+            ['domain' => 'cobrien2.greenriverdev.com', 'secure' => true, 'samesite' => 'None']);
+
+        die();
+    }
 
 	// USED WITH MY CODESPACE
 	$authUrl = 'https://conorep-zany-cod-pqq64gxvjjgfrjv9-3000.preview.app.github.dev/api/lti/authorize_redirect';
