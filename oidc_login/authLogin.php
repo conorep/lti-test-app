@@ -102,9 +102,24 @@
         $page = '';
         $page .= <<<EOD
                     <div>
-                        <script src="/whalesong/helper/jquerymin.js" type="text/javascript" crossorigin="anonymous">
+                    <script src="/whalesong/helper/jquerymin.js" type="text/javascript" crossorigin="anonymous"></script>
+                        <script type="text/javascript" crossorigin="anonymous">
                             $.support.cors = true;
-                            $.post("$url", $jsonData)
+                            $.post("$url", $jsonData )
+                            .done(function()
+                            {
+                                console.log('success!');
+                            })
+                            .fail(function()
+                            {
+                                console.log('failed.');
+                                window.location.replace("{$_COOKIE['targetLink']}");
+                            })
+                            .then(function()
+                            {
+                                window.location.replace("{$_COOKIE['targetLink']}");
+                            });
+                            
                         </script>
                     </div>
                     EOD;
