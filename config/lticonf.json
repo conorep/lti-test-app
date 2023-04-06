@@ -5,11 +5,13 @@
   "target_link_uri":"https://cobrien2.greenriverdev.com/whalesong/oidc_login/authLogin.php",
   "scopes":[
     "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem",
-    "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly",
+    "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem.readonly",
     "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly",
     "https://purl.imsglobal.org/spec/lti-ags/scope/score",
     "https://canvas.instructure.com/lti-ags/progress/scope/show",
-    "https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly"
+    "https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly",
+    "https://canvas.instructure.com/lti/public_jwk/scope/update",
+    "https://canvas.instructure.com/lti/account_lookup/scope/show"
   ],
   "extensions":[
     {
@@ -47,7 +49,7 @@
       }
     }
   ],
-  "public_jwk_url": "https://cobrien2.greenriverdev.com/whalesong/db_comms/keys/public.key",
+  "public_jwk_url": "https://cobrien2.greenriverdev.com/whalesong/db_comms/keys/pubkey.json",
   "custom_fields":{
     "canvas_course_id":"$Canvas.user.sisid"
   }
