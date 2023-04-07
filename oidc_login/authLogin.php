@@ -2,9 +2,9 @@
     require_once __DIR__ . '/../vendor/autoload.php';
 	use Ramsey\Uuid\Uuid;
 	use Firebase\JWT\JWT;
-
+	include __DIR__ . '/../helper/helperfunctions.php';
     include __DIR__ . '/../helper/includeheaders.php';
-
+	$helpers = new HelperFunctions();
 
     if (isset($_POST['access_token']))
     {
@@ -19,6 +19,7 @@
 
 	if(isset($_COOKIE['stateParameter']))
 	{
+		var_dump($_POST);
 		if($_POST['state'] != $_COOKIE['stateParameter'])
 		{
 			die("STATE DOES NOT MATCH. ERROR.");
@@ -26,7 +27,6 @@
 		{
             if(isset($_POST['id_token']))
             {
-                JWT::$leeway = 20;
 				$newUuid = (string)Uuid::uuid4();
 
                 $idToken = $_POST['id_token'];
@@ -40,11 +40,11 @@
                 $clientID = $jsonDecode->aud;
                 $payload = array
                     (
-                        "iss" => "cobrien2.greenriverdev.com",
+                        "iss" => "https://cobrien2.greenriverdev.com",
                         "sub" => $clientID,
                         "aud" => $tokenUrl,
                         "iat" => time(),
-                        "exp" => 360000,
+                        "exp" => 1609459200,
 						"jti" => $newUuid
                     );
 
@@ -53,23 +53,17 @@
                 //  send/receive of the info to get the token - i.e. php hands off the signed JWT to React to forward
                 //  to the oauth token Canvas URI
 				$getPrivKey = file_get_contents('../db_comms/keys/private.key');
-				$jwt = JWT::encode($payload,  $getPrivKey, 'RS256');
+				$jwt = JWT::encode($payload,  $getPrivKey, 'RS256', 'uniqueWhaleSongGP2023');
 //				echo 'JWT: ' . $jwt;
 				
                 $tokenAssertion =
                     [
-                        "grant_type" => "client_credentials",
-                        "client_assertion_type" => "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-                        "client_assertion" => $jwt,
-                        "client_id" => $clientID,
-                        "scope" => "https://purl.imsglobal.org/spec/lti-ags/lineitem https://purl.imsglobal.org/spec/lti-ags/result/read",
+                        'grant_type' => "client_credentials",
+                        'client_assertion_type' => "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+                        'client_assertion' => $jwt,
+                        'scope' => "https://purl.imsglobal.org/spec/lti-ags/lineitem https://purl.imsglobal.org/spec/lti-ags/result/read",
                     ];
-
-                $headers =
-                    [
-                        'Content-Type' => 'application/x-www-form-urlencoded',
-                        'Accept' => 'application/json'
-                    ];
+				
 				$body =
 				    [
 					    'form_params' => $tokenAssertion
@@ -77,8 +71,9 @@
 //                $body = json_encode($body);
 
 //                $newPageInfo = $helpers::sendForm($tokenUrl, $tokenAssertion, $_COOKIE['targetLink']);
-                $newPageInfo = submitData($tokenUrl, $body);
-                echo $newPageInfo;
+//                $newPageInfo = submitData($tokenUrl, $body);
+//                echo $newPageInfo;
+				echo $helpers::sendForm($tokenUrl, $tokenAssertion);
                 die();
 
             } else

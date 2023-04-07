@@ -27,21 +27,18 @@
          *
          * @param string $url URL to which the form should be submitted
          * @param array $params Array of form parameters
-         * @param string $targetUrl URL to redirect to on completion of submit
          * @return string
          */
-        public static function sendForm(string $url, array $params, string $targetUrl): string
+        public static function sendForm(string $url, array $params): string
         {
             $page = ' ';
             $page .= <<< EOD
-                            <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+                            <!DOCTYPE html PUBLIC>
                             <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
                             <head>
                                 <meta http-equiv="content-language" content="EN" />
                                 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
                                 <title>WhaleSong LTI Message</title>
-                                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-
                             </head>
                             
                             <body>
@@ -49,8 +46,9 @@
                             EOD;
             $page .= <<< EOD
                             
-                                <form id="postSubmitIFrame" method="post" action="$url" target="" encType="application/x-www-form-urlencoded">
-                            
+                                <form id="postSubmitIFrame" method="post" action="$url" target=""
+                                encType="application/x-www-form-urlencoded">
+
                             EOD;
             if (!empty($params))
             {
@@ -78,23 +76,10 @@
             }
 
             $page .= <<< EOD
+                        			<button type="submit">submit</button>
                                 </form>
                                 
                                 <script type="text/javascript">
-                                    $(window).on('pageshow', function() 
-                                    {
-                                        console.log("SOMETHING");
-                                        $('#tool_content').on('load', function()
-                                        {
-                                            var iFrameDOM = $('#tool_content').contents();
-                                            console.log(iFrameDOM);
-                                            iFrameDOM.find('#postSubmitIFrame').submit(function(res)
-                                            {
-                                                console.log('here');
-                                                console.log(res);
-                                            });
-                                        });
-                                    });
                                 </script>
                             </body>
                         </html>
