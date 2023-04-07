@@ -80,6 +80,7 @@
                                 </form>
                                 
                                 <script type="text/javascript">
+                                	document.querySelector('form#postSubmitIFrame').submit();
                                 </script>
                             </body>
                         </html>

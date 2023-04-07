@@ -44,7 +44,7 @@
                         "sub" => $clientID,
                         "aud" => $tokenUrl,
                         "iat" => time(),
-                        "exp" => 1609459200,
+                        "exp" => time() + (60 * 60),
 						"jti" => $newUuid
                     );
 
