@@ -8,9 +8,9 @@
 
     if (isset($_POST['access_token']))
     {
-        setcookie('oauthcodeLTI', $_POST['code'],
+        setcookie('oauthcodeLTI', $_POST['access_token'],
             ['domain' => 'cobrien2.greenriverdev.com', 'secure' => true, 'samesite' => 'None']);
-        header("Location: " . $_COOKIE['targetLink'], true,302);
+        header("Location: " . $_COOKIE['targetLink'], 302);
         die();
     }
 
@@ -19,7 +19,7 @@
 
 	if(isset($_COOKIE['stateParameter']))
 	{
-		var_dump($_POST);
+//		var_dump($_POST);
 		if($_POST['state'] != $_COOKIE['stateParameter'])
 		{
 			die("STATE DOES NOT MATCH. ERROR.");
@@ -73,7 +73,8 @@
 //                $newPageInfo = $helpers::sendForm($tokenUrl, $tokenAssertion, $_COOKIE['targetLink']);
 //                $newPageInfo = submitData($tokenUrl, $body);
 //                echo $newPageInfo;
-				echo $helpers::sendForm($tokenUrl, $tokenAssertion);
+				$helpers::sendForm($tokenUrl, $tokenAssertion, '_self', $_COOKIE['targetLink']);
+				header("Location: " . $_COOKIE['targetLink'], true, 302);
                 die();
 
             } else
@@ -84,40 +85,4 @@
 	} else
     {
         die('Error. How can I compare states when there are no states?');
-    }
-
-    /**
-     * @param string $url
-     * @param array $data
-     * @return string page HTML/JS
-     */
-    function submitData(string $url, array $data) : string
-    {
-        $jsonData = json_encode($data);
-        $page = '';
-        $page .= <<<EOD
-                    <div>
-                    <script src="/whalesong/helper/jquerymin.js" type="text/javascript" crossorigin="anonymous"></script>
-                        <script type="text/javascript" crossorigin="anonymous">
-                            $.support.cors = true;
-                            $.post("$url", $jsonData )
-                            .done(function()
-                            {
-                                console.log('success!');
-                            })
-                            .fail(function()
-                            {
-                                console.log('failed.');
-                                window.location.replace("{$_COOKIE['targetLink']}");
-                            })
-                            .then(function()
-                            {
-                                window.location.replace("{$_COOKIE['targetLink']}");
-                            });
-                            
-                        </script>
-                    </div>
-                    EOD;
-
-        return $page;
     }

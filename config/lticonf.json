@@ -32,6 +32,16 @@
             "placement":"course_navigation",
             "message_type":"LtiResourceLinkRequest",
             "target_link_uri":"https://cobrien2.greenriverdev.com/whalesong/pages/coursenav/index.php",
+            "scopes":[
+              "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem",
+              "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem.readonly",
+              "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly",
+              "https://purl.imsglobal.org/spec/lti-ags/scope/score",
+              "https://canvas.instructure.com/lti-ags/progress/scope/show",
+              "https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly",
+              "https://canvas.instructure.com/lti/public_jwk/scope/update",
+              "https://canvas.instructure.com/lti/account_lookup/scope/show"
+            ],
             "canvas_icon_class":"icon-lti",
             "custom_fields":{
               "canvas_course_id":"$Canvas.user.id"
@@ -43,13 +53,23 @@
             "icon_url":"https://cobrien2.greenriverdev.com/whalesong/toolicon/orcas-logo.png",
             "placement":"assignment_selection",
             "message_type":"LtiDeepLinkingRequest",
-            "target_link_uri":"https://cobrien2.greenriverdev.com/whalesong/pages/assignmentlink/index.php"
+            "target_link_uri":"https://cobrien2.greenriverdev.com/whalesong/pages/assignmentlink/index.php",
+            "scopes":[
+              "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem",
+              "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem.readonly",
+              "https://purl.imsglobal.org/spec/lti-ags/scope/result.readonly",
+              "https://purl.imsglobal.org/spec/lti-ags/scope/score",
+              "https://canvas.instructure.com/lti-ags/progress/scope/show",
+              "https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly",
+              "https://canvas.instructure.com/lti/public_jwk/scope/update",
+              "https://canvas.instructure.com/lti/account_lookup/scope/show"
+            ]
           }
         ]
       }
     }
   ],
-  "public_jwk_url": "https://cobrien2.greenriverdev.com/whalesong/db_comms/keys/pubkey.jwk",
+  "public_jwk_url": "https://cobrien2.greenriverdev.com/whalesong/db_comms/keys/pubkey.json",
   "custom_fields":{
     "canvas_course_id":"$Canvas.user.sisid"
   }

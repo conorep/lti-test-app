@@ -1,5 +1,5 @@
 .idea
 vendor
 /db_comms/keys/private.key
-/db_comms/keys/keypair.jwk
-/db_comms/keys/keypairset.jwk
+/db_comms/keys/keypair.json
+/db_comms/keys/keypairsejson

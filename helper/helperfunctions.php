@@ -18,7 +18,6 @@
             }
             header('Access-Control-Allow-Origin: *');
             header('Access-Control-Allow-Methods: POST, GET');
-//            header('Referrer-Policy: origin-when-cross-origin');
         }
 
 
@@ -27,9 +26,11 @@
          *
          * @param string $url URL to which the form should be submitted
          * @param array $params Array of form parameters
-         * @return string
+		 * @param string $target form target
+		 * @param string $path the page to redirect to
+         * @return void
          */
-        public static function sendForm(string $url, array $params): string
+        public static function sendForm(string $url, array $params, string $target, string $path): void
         {
             $page = ' ';
             $page .= <<< EOD
@@ -46,7 +47,7 @@
                             EOD;
             $page .= <<< EOD
                             
-                                <form id="postSubmitIFrame" method="post" action="$url" target=""
+                                <form id="postSubmitIFrame" method="post" action="$url" target="$target"
                                 encType="application/x-www-form-urlencoded">
 
                             EOD;
@@ -76,16 +77,17 @@
             }
 
             $page .= <<< EOD
-                        			<button type="submit">submit</button>
+                        			<button type="submit" hidden>submit</button>
                                 </form>
                                 
                                 <script type="text/javascript">
                                 	document.querySelector('form#postSubmitIFrame').submit();
+                                 
                                 </script>
                             </body>
                         </html>
                         EOD;
-            return $page;
+            echo $page;
         }
 
 
