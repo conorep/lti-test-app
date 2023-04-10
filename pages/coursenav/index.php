@@ -1,15 +1,15 @@
 <?php
-    include __DIR__ . '/../../helper/includeheaders.php';
-
+    session_start();
+//    include __DIR__ . '/../../helper/includeheaders.php';
+    var_dump($_REQUEST);
+    echo "HERE";
 
     if (isset($_POST['access_token']))
     {
-        setcookie('oauthcodeLTI', $_POST['code'],
-            ['domain' => 'cobrien2.greenriverdev.com', 'secure' => true, 'samesite' => 'None']);
-        header("Location: " . $_COOKIE['targetLink'], true,302);
-        die();
+        echo "WHAT";
+        exit();
+
     }
 
-
-    echo '<h1>Congrats. You\'ve reached the Guided Practice course navigation link!</h1>';
+    echo '<h1>You\'ve reached the Guided Practice course navigation page.</h1>';
     

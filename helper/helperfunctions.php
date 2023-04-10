@@ -1,5 +1,7 @@
 <?php
 
+    use JetBrains\PhpStorm\NoReturn;
+
     class HelperFunctions
     {
         private static $formSubmissionTimeout = 1000;
@@ -20,6 +22,17 @@
             header('Access-Control-Allow-Methods: POST, GET');
         }
 
+        /**
+         * An easier method for setting cookies to our domain.
+         * @param string $cookieName
+         * @param string $cookieData
+         * @return void
+         */
+        public static function setGoodCookie(string $cookieName, string $cookieData): void
+        {
+            setcookie($cookieName, $cookieData,
+                ['domain' => 'cobrien2.greenriverdev.com', 'secure' => true, 'samesite' => 'None']);
+        }
 
         /**
          * Generate a web page containing an auto-submitted form of parameters.
@@ -30,35 +43,25 @@
 		 * @param string $path the page to redirect to
          * @return void
          */
-        public static function sendForm(string $url, array $params, string $target, string $path): void
+        #[NoReturn] public static function sendForm(string $url, array $params, string $target, string $path): void
         {
             $page = ' ';
             $page .= <<< EOD
-                            <!DOCTYPE html PUBLIC>
-                            <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
-                            <head>
-                                <meta http-equiv="content-language" content="EN" />
-                                <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-                                <title>WhaleSong LTI Message</title>
-                            </head>
-                            
+                            <!DOCTYPE html>
                             <body>
 
                             EOD;
             $page .= <<< EOD
                             
-                                <form id="postSubmitIFrame" method="post" action="$url" target="$target"
-                                encType="application/x-www-form-urlencoded">
+                                <form id="postSubmitIFrame" method="post" action="$url"  enctype="application/x-www-form-urlencoded" target="tool_content">
 
                             EOD;
             if (!empty($params))
             {
                 foreach ($params as $key => $value)
                 {
-                    $key = htmlentities($key, ENT_COMPAT | ENT_HTML401, 'UTF-8');
                     if (!is_array($value))
                     {
-                        $value = htmlentities($value, ENT_COMPAT | ENT_HTML401, 'UTF-8');
                         $page .= <<< EOD
                                     <input type="hidden" name="$key" id="id_$key" value="$value" />
                             EOD;
@@ -66,7 +69,6 @@
                     {
                         foreach ($value as $element)
                         {
-                            $element = htmlentities($element, ENT_COMPAT | ENT_HTML401, 'UTF-8');
                             $page .= <<< EOD
                                     <input type="hidden" name="$key" id="id_$key" value="$element" />
 
@@ -75,22 +77,57 @@
                     }
                 }
             }
-
             $page .= <<< EOD
-                        			<button type="submit" hidden>submit</button>
                                 </form>
-                                
                                 <script type="text/javascript">
-                                	document.querySelector('form#postSubmitIFrame').submit();
-                                 
+                                    (function()
+                                    {
+                                        document.querySelector('form#postSubmitIFrame').submit();
+                                        return true;
+                                    })();
                                 </script>
                             </body>
-                        </html>
+                        EOD;
+            echo $page;
+            exit();
+        }
+
+        /**
+         * This was an attempt to post to a server page to run a function. I got no further using this.
+         * @param string $url
+         * @param mixed $params
+         * @return void
+         */
+        public static function ajaxPost(string $url, mixed $params): void
+        {
+            $internalUrl = "https://cobrien2.greenriverdev.com/whalesong/oidc_login/authPost.php";
+            $page = ' ';
+            $page .= <<< EOD
+                        <!DOCTYPE html>
+                        <head>
+                            <script type="text/javascript" src="/../whalesong/helper/jquerymin.js"></script>
+                            <title>Ajax Post</title>
+                        </head>
+                        <script type="text/javascript">
+                            let paramData = JSON.stringify($params);
+                            fetch('$internalUrl', 
+                            {
+                                method: "POST",
+                                mode: "cors",
+                                headers: {
+                                    "Accept": "application/json",
+                                    "Content-Type": "application/json"
+                                    },
+                                body: paramData
+                            })
+                            .then(data => console.log(data))
+                            .catch(e => console.error(e.message));
+                            
+                        </script>
+
                         EOD;
             echo $page;
         }
-
-
 
     /*end class*/
     }

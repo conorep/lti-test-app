@@ -1,16 +1,19 @@
 <?php
 	require_once __DIR__ . '/../vendor/autoload.php';
     include __DIR__ . '/../helper/includeheaders.php';
+    include __DIR__ . '/../helper/helperfunctions.php';
+    $helpers = new HelperFunctions();
+    http_response_code(302);
 
     if (isset($_POST['access_token']))
     {
-        setcookie('oauthcodeLTI', $_POST['code'],
-            ['domain' => 'cobrien2.greenriverdev.com', 'secure' => true, 'samesite' => 'None']);
-        header("Location: " . $_COOKIE['targetLink'], true,302);
-        die();
+        $helpers::setGoodCookie('oauthcodeLTI', $_POST['access_token']);
+//        header("Location: " . $_COOKIE['targetLink'], true,302);
+        echo"GOT A TOKEN AT LOGIN INDEX";
+        exit();
     }
 
-	// USED WITH MY CODESPACE
+	// USED WITH MY CODE SPACE
 	$authUrl = 'https://conorep-zany-cod-pqq64gxvjjgfrjv9-3000.preview.app.github.dev/api/lti/authorize_redirect';
 	
 	
@@ -40,15 +43,14 @@
     '&lti_message_hint='.$lti_message_hint;
 
     $authUrl .= $dataArgs;
-	
-	setcookie('stateParameter', $stateParam, ['domain'=>'cobrien2.greenriverdev.com', 'secure'=>true,'samesite'=>'None']);
-	setcookie('nonceParameter', $nonceParam, ['domain'=>'cobrien2.greenriverdev.com', 'secure'=>true,'samesite'=>'None']);
-    setcookie('clientId', $client_id, ['domain'=>'cobrien2.greenriverdev.com', 'secure'=>true,'samesite'=>'None']);
+
+    $helpers::setGoodCookie('stateParameter', $stateParam);
+    $helpers::setGoodCookie('nonceParameter', $nonceParam);
+    $helpers::setGoodCookie('clientId', $client_id);
 	if($target_link_uri != null)
     {
-        setcookie('targetLink', $target_link_uri, ['domain'=>'cobrien2.greenriverdev.com', 'secure'=>true,'samesite'=>'None']);
+        $helpers::setGoodCookie('targetLink', $target_link_uri);
     }
 
 	header('Location: '.$authUrl, 302);
-    die();
-	
+    exit();

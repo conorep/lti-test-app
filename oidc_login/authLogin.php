@@ -5,13 +5,14 @@
 	include __DIR__ . '/../helper/helperfunctions.php';
     include __DIR__ . '/../helper/includeheaders.php';
 	$helpers = new HelperFunctions();
+    http_response_code(302);
 
     if (isset($_POST['access_token']))
     {
-        setcookie('oauthcodeLTI', $_POST['access_token'],
-            ['domain' => 'cobrien2.greenriverdev.com', 'secure' => true, 'samesite' => 'None']);
+        $helpers::setGoodCookie('oauthcodeLTI', $_POST['access_token']);
         header("Location: " . $_COOKIE['targetLink'], 302);
-        die();
+        echo "GOT A TOKEN";
+        exit("NICE");
     }
 
 	// URL to post info to
@@ -19,7 +20,6 @@
 
 	if(isset($_COOKIE['stateParameter']))
 	{
-//		var_dump($_POST);
 		if($_POST['state'] != $_COOKIE['stateParameter'])
 		{
 			die("STATE DOES NOT MATCH. ERROR.");
@@ -54,13 +54,13 @@
                 //  to the oauth token Canvas URI
 				$getPrivKey = file_get_contents('../db_comms/keys/private.key');
 				$jwt = JWT::encode($payload,  $getPrivKey, 'RS256', 'uniqueWhaleSongGP2023');
-//				echo 'JWT: ' . $jwt;
 				
                 $tokenAssertion =
                     [
                         'grant_type' => "client_credentials",
                         'client_assertion_type' => "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
                         'client_assertion' => $jwt,
+                        'target_link' => $_COOKIE['targetLink'],
                         'scope' => "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly"
                     ];
 				
@@ -68,14 +68,60 @@
 				    [
 					    'form_params' => $tokenAssertion
 				    ];
-//                $body = json_encode($body);
 
-//                $newPageInfo = $helpers::sendForm($tokenUrl, $tokenAssertion, $_COOKIE['targetLink']);
-//                $newPageInfo = submitData($tokenUrl, $body);
-//                echo $newPageInfo;
-				$helpers::sendForm($tokenUrl, $tokenAssertion, '_self', $_COOKIE['targetLink']);
-				header("Location: " . $_COOKIE['targetLink'], true, 302);
-                die();
+                $body = json_encode($body);
+//				$helpers::sendForm($tokenUrl, $tokenAssertion, $_COOKIE['targetLink'], $_COOKIE['targetLink']);
+
+
+                $url = $tokenUrl;
+                $params = $tokenAssertion;
+
+
+                $page = ' ';
+                $page .= <<< EOD
+                            <!DOCTYPE html>
+                            <body>
+
+                            EOD;
+                $page .= <<< EOD
+                            
+                                <form id="postSubmitIFrame" method="post" action="$url"  enctype="application/x-www-form-urlencoded">
+
+                            EOD;
+                if (!empty($params))
+                {
+                    foreach ($params as $key => $value)
+                    {
+                        if (!is_array($value))
+                        {
+                            $page .= <<< EOD
+                                    <input type="hidden" name="$key" id="id_$key" value="$value" />
+                            EOD;
+                        } else
+                        {
+                            foreach ($value as $element)
+                            {
+                                $page .= <<< EOD
+                                    <input type="hidden" name="$key" id="id_$key" value="$element" />
+
+                            EOD;
+                            }
+                        }
+                    }
+                }
+                $page .= <<< EOD
+                                </form>
+                                <script type="text/javascript">
+                                    (function()
+                                    {
+                                        document.querySelector('form#postSubmitIFrame').submit();
+                                        return true;
+                                    })();
+                                </script>
+                            </body>
+                        EOD;
+                echo $page;
+
 
             } else
             {
