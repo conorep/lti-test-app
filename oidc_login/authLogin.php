@@ -63,66 +63,13 @@
                         'target_link' => $_COOKIE['targetLink'],
                         'scope' => "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly"
                     ];
-				
 				$body =
 				    [
 					    'form_params' => $tokenAssertion
 				    ];
 
                 $body = json_encode($body);
-//				$helpers::sendForm($tokenUrl, $tokenAssertion, $_COOKIE['targetLink'], $_COOKIE['targetLink']);
-
-
-                $url = $tokenUrl;
-                $params = $tokenAssertion;
-
-
-                $page = ' ';
-                $page .= <<< EOD
-                            <!DOCTYPE html>
-                            <body>
-
-                            EOD;
-                $page .= <<< EOD
-                            
-                                <form id="postSubmitIFrame" method="post" action="$url"  enctype="application/x-www-form-urlencoded">
-
-                            EOD;
-                if (!empty($params))
-                {
-                    foreach ($params as $key => $value)
-                    {
-                        if (!is_array($value))
-                        {
-                            $page .= <<< EOD
-                                    <input type="hidden" name="$key" id="id_$key" value="$value" />
-                            EOD;
-                        } else
-                        {
-                            foreach ($value as $element)
-                            {
-                                $page .= <<< EOD
-                                    <input type="hidden" name="$key" id="id_$key" value="$element" />
-
-                            EOD;
-                            }
-                        }
-                    }
-                }
-                $page .= <<< EOD
-                                </form>
-                                <script type="text/javascript">
-                                    (function()
-                                    {
-                                        document.querySelector('form#postSubmitIFrame').submit();
-                                        return true;
-                                    })();
-                                </script>
-                            </body>
-                        EOD;
-                echo $page;
-
-
+				$helpers::sendForm($tokenUrl, $tokenAssertion, $_COOKIE['targetLink'], $_COOKIE['targetLink']);
             } else
             {
                 die("ERROR. NO ID TOKEN!");

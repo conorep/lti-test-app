@@ -53,7 +53,7 @@
                             EOD;
             $page .= <<< EOD
                             
-                                <form id="postSubmitIFrame" method="post" action="$url"  enctype="application/x-www-form-urlencoded" target="tool_content">
+                                <form id="postSubmitIFrame" method="post" action="$url"  enctype="application/x-www-form-urlencoded" target="">
 
                             EOD;
             if (!empty($params))
