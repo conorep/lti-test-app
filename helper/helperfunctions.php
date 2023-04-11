@@ -1,7 +1,5 @@
 <?php
 
-    use JetBrains\PhpStorm\NoReturn;
-
     class HelperFunctions
     {
         private static $formSubmissionTimeout = 1000;
@@ -31,7 +29,9 @@
         public static function setGoodCookie(string $cookieName, string $cookieData): void
         {
             setcookie($cookieName, $cookieData,
-                ['domain' => 'cobrien2.greenriverdev.com', 'secure' => true, 'samesite' => 'None']);
+                ['domain' => 'cobrien2.greenriverdev.com',
+                    'secure' => true,
+                    'samesite' => 'None']);
         }
 
         /**
@@ -43,17 +43,22 @@
 		 * @param string $path the page to redirect to
          * @return void
          */
-        #[NoReturn] public static function sendForm(string $url, array $params, string $target, string $path): void
+        public static function sendForm(string $url, array $params, string $target, string $path): void
         {
             $page = ' ';
             $page .= <<< EOD
                             <!DOCTYPE html>
+                            <head>
+                            	<script type="text/javascript" src="/../whalesong/helper/jquerymin.js"></script>
+                            	<title>Send Form Frame</title>
+                            </head>
                             <body>
 
                             EOD;
             $page .= <<< EOD
                             
-                                <form id="postSubmitIFrame" method="post" action="$url"  enctype="application/x-www-form-urlencoded" target="">
+                                <form id="postSubmitIFrame" method="post" action="$url" enctype="multipart/form-data"
+                                target="_self">
 
                             EOD;
             if (!empty($params))
@@ -79,12 +84,21 @@
             }
             $page .= <<< EOD
                                 </form>
+                                <div id="json_div">
+                                </div>
                                 <script type="text/javascript">
-                                    (function()
+                                $('#postSubmitIFrame').on('submit', '#postSubmitIFrame', function(e) {
+                                    e.preventDefault();
+                                    var postData = $(this).serialize();
+                                    
+                                    $.post("$url", postData, function(data, status)
                                     {
-                                        document.querySelector('form#postSubmitIFrame').submit();
+                                        console.log('data: ' + data + " status: " + status);
                                         return true;
-                                    })();
+                                    });
+                                    return false;
+                                })
+                                document.getElementById('postSubmitIFrame').submit();
                                 </script>
                             </body>
                         EOD;

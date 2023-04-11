@@ -14,7 +14,7 @@
     }
 
 	// USED WITH MY CODE SPACE
-	$authUrl = 'https://conorep-zany-cod-pqq64gxvjjgfrjv9-3000.preview.app.github.dev/api/lti/authorize_redirect';
+	$authUrl = 'https://canvas.granny.dev/api/lti/authorize_redirect';
 	
 	
 	//$authUrl = 'https://canvas.instructure.com/api/lti/authorize_redirect'; <--- auth url for production environs

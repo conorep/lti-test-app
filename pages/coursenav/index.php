@@ -1,6 +1,5 @@
 <?php
-    session_start();
-//    include __DIR__ . '/../../helper/includeheaders.php';
+    include __DIR__ . '/../../helper/includeheaders.php';
     var_dump($_REQUEST);
     echo "HERE";
 

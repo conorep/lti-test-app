@@ -6,17 +6,18 @@
     include __DIR__ . '/../helper/includeheaders.php';
 	$helpers = new HelperFunctions();
     http_response_code(302);
-
-    if (isset($_POST['access_token']))
-    {
-        $helpers::setGoodCookie('oauthcodeLTI', $_POST['access_token']);
-        header("Location: " . $_COOKIE['targetLink'], 302);
-        echo "GOT A TOKEN";
-        exit("NICE");
-    }
+	
+//	if(!isset($POST['state']))
+//	{
+//		die("WOW");
+//	}
+	
 
 	// URL to post info to
-	$tokenUrl = "https://conorep-zany-cod-pqq64gxvjjgfrjv9-3000.preview.app.github.dev/login/oauth2/token";
+	$tokenUrl = "https://canvas.granny.dev/login/oauth2/token";
+	
+//	$redirect_uri = 'https://cobrien2.greenriverdev.com/whalesong/oidc_login/authLogin.php';
+	$redirect_uri ='https://cobrien2.greenriverdev.com/whalesong/pages/coursenav/';
 
 	if(isset($_COOKIE['stateParameter']))
 	{
@@ -60,8 +61,8 @@
                         'grant_type' => "client_credentials",
                         'client_assertion_type' => "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
                         'client_assertion' => $jwt,
-                        'target_link' => $_COOKIE['targetLink'],
-                        'scope' => "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly"
+                        'scope' => "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly",
+						'redirect_uri' => $redirect_uri
                     ];
 				$body =
 				    [
@@ -69,7 +70,7 @@
 				    ];
 
                 $body = json_encode($body);
-				$helpers::sendForm($tokenUrl, $tokenAssertion, $_COOKIE['targetLink'], $_COOKIE['targetLink']);
+				$helpers::sendForm($tokenUrl, $tokenAssertion, $_COOKIE['targetLink'], $redirect_uri);
             } else
             {
                 die("ERROR. NO ID TOKEN!");
