@@ -2,7 +2,6 @@
 
     class HelperFunctions
     {
-        private static $formSubmissionTimeout = 1000;
 
         /**
          * @return void
@@ -22,125 +21,67 @@
 
         /**
          * An easier method for setting cookies to our domain.
-         * @param string $cookieName
-         * @param string $cookieData
+         * @param string $cookieName yep, indeed! the name of the cookie.
+         * @param string $cookieData data to save as cookie
+         * @param string|null $path the path for setcookie
          * @return void
          */
-        public static function setGoodCookie(string $cookieName, string $cookieData): void
+        public static function setGoodCookie(string $cookieName, string $cookieData, string|null $path = null): void
         {
-            setcookie($cookieName, $cookieData,
-                ['domain' => 'cobrien2.greenriverdev.com',
+            $options =
+                [
+                    'domain' => 'cobrien2.greenriverdev.com',
                     'secure' => true,
-                    'samesite' => 'None']);
-        }
-
-        /**
-         * Generate a web page containing an auto-submitted form of parameters.
-         *
-         * @param string $url URL to which the form should be submitted
-         * @param array $params Array of form parameters
-		 * @param string $target form target
-		 * @param string $path the page to redirect to
-         * @return void
-         */
-        public static function sendForm(string $url, array $params, string $target, string $path): void
-        {
-            $page = ' ';
-            $page .= <<< EOD
-                            <!DOCTYPE html>
-                            <head>
-                            	<script type="text/javascript" src="/../whalesong/helper/jquerymin.js"></script>
-                            	<title>Send Form Frame</title>
-                            </head>
-                            <body>
-
-                            EOD;
-            $page .= <<< EOD
-                            
-                                <form id="postSubmitIFrame" method="post" action="$url" enctype="multipart/form-data"
-                                target="_self">
-
-                            EOD;
-            if (!empty($params))
+                    'samesite' => 'None'
+                ];
+            if($path != null)
             {
-                foreach ($params as $key => $value)
-                {
-                    if (!is_array($value))
-                    {
-                        $page .= <<< EOD
-                                    <input type="hidden" name="$key" id="id_$key" value="$value" />
-                            EOD;
-                    } else
-                    {
-                        foreach ($value as $element)
-                        {
-                            $page .= <<< EOD
-                                    <input type="hidden" name="$key" id="id_$key" value="$element" />
-
-                            EOD;
-                        }
-                    }
-                }
+                $options['path'] = $path;
             }
-            $page .= <<< EOD
-                                </form>
-                                <div id="json_div">
-                                </div>
-                                <script type="text/javascript">
-                                $('#postSubmitIFrame').on('submit', '#postSubmitIFrame', function(e) {
-                                    e.preventDefault();
-                                    var postData = $(this).serialize();
-                                    
-                                    $.post("$url", postData, function(data, status)
-                                    {
-                                        console.log('data: ' + data + " status: " + status);
-                                        return true;
-                                    });
-                                    return false;
-                                })
-                                document.getElementById('postSubmitIFrame').submit();
-                                </script>
-                            </body>
-                        EOD;
-            echo $page;
-            exit();
+
+            setcookie($cookieName, $cookieData, $options);
         }
 
         /**
-         * This was an attempt to post to a server page to run a function. I got no further using this.
-         * @param string $url
-         * @param mixed $params
-         * @return void
+         * @param $method string post, put, or get
+         * @param $url string URL to contact
+         * @param $data array|null data for request body or null
+         * @param $header array|null array of header info or null
+         * @return bool|string|void
          */
-        public static function ajaxPost(string $url, mixed $params): void
-        {
-            $internalUrl = "https://cobrien2.greenriverdev.com/whalesong/oidc_login/authPost.php";
-            $page = ' ';
-            $page .= <<< EOD
-                        <!DOCTYPE html>
-                        <head>
-                            <script type="text/javascript" src="/../whalesong/helper/jquerymin.js"></script>
-                            <title>Ajax Post</title>
-                        </head>
-                        <script type="text/javascript">
-                            let paramData = JSON.stringify($params);
-                            fetch('$internalUrl', 
-                            {
-                                method: "POST",
-                                mode: "cors",
-                                headers: {
-                                    "Accept": "application/json",
-                                    "Content-Type": "application/json"
-                                    },
-                                body: paramData
-                            })
-                            .then(data => console.log(data))
-                            .catch(e => console.error(e.message));
-                            
-                        </script>
+        public static function callAPI(string $method, string $url, array|null $data, array|null $header){
+            $curl = curl_init();
+            switch ($method){
+                case "POST":
+                    curl_setopt($curl, CURLOPT_POST, 1);
+                    if ($data)
+                        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+                    break;
+                case "PUT":
+                    curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
+                    if ($data)
+                        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+                    break;
+                default:
+                    if ($data)
+                        $url = sprintf("%s?%s", $url, http_build_query($data));
+            }
 
-                        EOD;
-            echo $page;
+            curl_setopt($curl, CURLOPT_URL, $url);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+            if($header != null)
+            {
+                curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
+            }
+
+            $result = curl_exec($curl);
+            if(!$result)
+            {
+                die("Connection Failure");
+            }
+            curl_close($curl);
+            return $result;
         }
 
     /*end class*/
