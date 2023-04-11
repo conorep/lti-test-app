@@ -1,23 +1,10 @@
 <?php
-
+	
+	/**
+	 * This class provides several static methods, each of which provides a bit more readable and writable code.
+	 */
     class HelperFunctions
     {
-
-        /**
-         * @return void
-         */
-        public static function sessionStuff(): void
-        {
-            if (empty(session_id()))
-            {
-                session_start(['cookie_lifetime' => 86400]);
-            } else
-            {
-                session_start();
-            }
-            header('Access-Control-Allow-Origin: *');
-            header('Access-Control-Allow-Methods: POST, GET');
-        }
 
         /**
          * An easier method for setting cookies to our domain.
@@ -41,6 +28,20 @@
 
             setcookie($cookieName, $cookieData, $options);
         }
+		
+		/**
+		 * This is a helper function to allow setting of many cookies at once.
+		 * @param array $cookieData contains more than one piece of info to set a cookie
+		 * @return void
+		 */
+		public static function setGoodCookies(array $cookieData): void
+		{
+			foreach($cookieData as $cookieInfo)
+			{
+				$cookiePath = count($cookieInfo) == 3 ? $cookieInfo[2] : null;
+				self::setGoodCookie($cookieInfo[0], $cookieInfo[1], $cookiePath);
+			}
+		}
 
         /**
          * @param $method string post, put, or get
