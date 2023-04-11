@@ -1,13 +1,10 @@
 <?php
-	require_once __DIR__ . '/../vendor/autoload.php';
     include __DIR__ . '/../helper/includeheaders.php';
     include __DIR__ . '/../helper/helperfunctions.php';
-    $helpers = new HelperFunctions();
     http_response_code(302);
 
 	// USED WITH MY CODE SPACE
 	$authUrl = 'https://canvas.granny.dev/api/lti/authorize_redirect';
-	
 	
 	//$authUrl = 'https://canvas.instructure.com/api/lti/authorize_redirect'; <--- auth url for production environs
 	//$authUrl = 'https://sso.canvaslms.com/api/lti/authorize_redirect'; <--- new auth url for production environs
@@ -35,13 +32,11 @@
     '&lti_message_hint='.$lti_message_hint;
 
     $authUrl .= $dataArgs;
-
-    $helpers::setGoodCookie('stateParameter', $stateParam);
-    $helpers::setGoodCookie('nonceParameter', $nonceParam);
-    $helpers::setGoodCookie('clientId', $client_id);
+	
+	HelperFunctions::setGoodCookies([['stateParameter', $stateParam], ['nonceParameter', $nonceParam], ['clientId', $client_id]]);
 	if($target_link_uri != null)
     {
-        $helpers::setGoodCookie('targetLink', $target_link_uri);
+		HelperFunctions::setGoodCookie('targetLink', $target_link_uri);
     }
 
 	header('Location: '.$authUrl, 302);
