@@ -2,16 +2,14 @@
     require_once __DIR__ . '/../vendor/autoload.php';
 	use Ramsey\Uuid\Uuid;
 	use Firebase\JWT\JWT;
-	include __DIR__ . '/../helper/helperfunctions.php';
+	use Firebase\JWT\JWK;
     include __DIR__ . '/../helper/includeheaders.php';
-	$helpers = new HelperFunctions();
+	include __DIR__ . '/../helper/helperfunctions.php';
     http_response_code(302);
 
 	// URL to post info to
+	//TODO: make this dynamic! no hard-coded URI.
 	$tokenUrl = "https://canvas.granny.dev/login/oauth2/token";
-	
-//	$redirect_uri = 'https://cobrien2.greenriverdev.com/whalesong/oidc_login/authLogin.php';
-	$redirect_uri ='https://cobrien2.greenriverdev.com/whalesong/pages/coursenav/';
 
 	if(isset($_COOKIE['stateParameter']))
 	{
@@ -26,13 +24,34 @@
 
                 $idToken = $_POST['id_token'];
                 $authToken = $_POST['authenticity_token'];
-
-                $jwtArr = explode('.', $idToken);
-                $jwtPrt2 = base64_decode($jwtArr[1]);
-				$jsonDecode = json_decode($jwtPrt2);
-
-//                TODO: need to verify signature with  existing Canvas JWKs
-                $clientID = $jsonDecode->aud;
+				
+				//TODO: make this dynamic! no hard-coded URI.
+				$canvasJWKs = file_get_contents('https://canvas.granny.dev/api/lti/security/jwks');
+				$canvasJWKs = json_decode($canvasJWKs, true);
+				try
+				{
+					$jwkArr = JWK::parseKeySet($canvasJWKs, 'RS256');
+					$jwkVerify = JWT::decode($idToken, $jwkArr);
+					$jwkAssocArr = json_decode(json_encode($jwkVerify), true);
+				}
+				catch(Exception $e)
+				{
+					echo $e->getMessage() . "<br/>";
+					while($e = $e->getPrevious())
+					{
+						echo 'Previous exception: '.$e->getMessage() . "<br/>";
+					}
+					die();
+				}
+				
+				//Write action to txt log
+				$log  = "User: ".$_SERVER['REMOTE_ADDR'].' - '.date("F j, Y, g:i a").PHP_EOL.
+					"Data: ". print_r($jwkAssocArr, true) . ' ' . PHP_EOL .
+					'-------------------------' . PHP_EOL;
+				//-
+				file_put_contents('./log_'.date("j.n.Y").'.txt', $log, FILE_APPEND);
+				
+                $clientID = $jwkAssocArr['aud'];
                 $payload = array
                     (
                         "iss" => "https://cobrien2.greenriverdev.com",
@@ -64,16 +83,19 @@
 
                 $body = json_encode($body);
 
-                $response = $helpers::callAPI("POST", $tokenUrl, $tokenAssertion, null);
+                $response = HelperFunctions::callAPI("POST", $tokenUrl, $tokenAssertion, null);
                 $response = json_decode($response, true);
 
                 if(isset($response['access_token']))
                 {
-                    /*TODO: make a helper function that takes in as many pieces of data for cookies as needed*/
-                    $helpers::setGoodCookie('LTI_access_token', $response['access_token'], '/');
-                    $helpers::setGoodCookie('LTI_token_type', $response['token_type'], '/');
-                    $helpers::setGoodCookie('LTI_token_expiration', $response['expires_in'], '/');
-                    $helpers::setGoodCookie('LTI_token_scope', $response['scope'], '/');
+					$cookieData =
+						[
+							['LTI_access_token', $response['access_token'], '/'],
+							['LTI_token_type', $response['token_type'], '/'],
+							['LTI_token_expiration', $response['expires_in'], '/'],
+							['LTI_token_scope', $response['scope'], '/'],
+						];
+					HelperFunctions::setGoodCookies($cookieData);
 
                     header("Location: " . $_COOKIE['targetLink'], FALSE, 302);
                     exit();
