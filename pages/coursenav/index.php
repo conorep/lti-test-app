@@ -1,29 +1,7 @@
 <?php
-    include __DIR__ . '/../../helper/includeheaders.php';
-    include __DIR__ . '/../../helper/helperfunctions.php';
-    $helpers = new HelperFunctions();
-
-    echo '<h1>You\'ve reached the Guided Practice course navigation page.</h1>';
-
-    if (isset($_COOKIE['LTI_access_token']))
-    {
-        echo "Tool authorized, token retrieved!" . '<br/>';
-        echo "TOKEN: ". $_COOKIE['LTI_access_token'] . '<br/>';
-        echo "TYPE: ". $_COOKIE['LTI_token_type'] . '<br/>';
-        echo "EXPIRATION: ". $_COOKIE['LTI_token_expiration'] . '<br/>';
-        echo "RESOURCE SCOPE(S): ". $_COOKIE['LTI_token_scope'] . '<br/>';
-        echo '<pre><br/></pre>';
-
-        /*hard-coded - I grabbed this URL from the JWT that Canvsa sent when running through launch stuff*/
-        /* https://canvas.granny.dev/api/lti/courses/2/names_and_roles */
-        $coureNamesAndRoles = 'https://canvas.granny.dev/api/lti/courses/2/names_and_roles';
-
-        $authorization = "Authorization: Bearer " . $_COOKIE['LTI_access_token'];
-        $headers = ['Content-Type: application/json', $authorization];
-        $response = $helpers::callAPI("GET", $coureNamesAndRoles, null, $headers);
-        $response = json_decode($response, true);
-        echo 'NAMES AND ROLES DATA DUMP: <br/>';
-        print_r($response);
-    }
+	include __DIR__ . '/../page_includes/pageincludehead.php';
+	
+	$pageString = 'course navigation';
+	
+	include(__DIR__ . '/../page_includes/pageinclude.php');
     exit();
-    
