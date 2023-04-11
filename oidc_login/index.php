@@ -5,14 +5,6 @@
     $helpers = new HelperFunctions();
     http_response_code(302);
 
-    if (isset($_POST['access_token']))
-    {
-        $helpers::setGoodCookie('oauthcodeLTI', $_POST['access_token']);
-//        header("Location: " . $_COOKIE['targetLink'], true,302);
-        echo"GOT A TOKEN AT LOGIN INDEX";
-        exit();
-    }
-
 	// USED WITH MY CODE SPACE
 	$authUrl = 'https://canvas.granny.dev/api/lti/authorize_redirect';
 	
