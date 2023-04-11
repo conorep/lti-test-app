@@ -6,12 +6,6 @@
     include __DIR__ . '/../helper/includeheaders.php';
 	$helpers = new HelperFunctions();
     http_response_code(302);
-	
-//	if(!isset($POST['state']))
-//	{
-//		die("WOW");
-//	}
-	
 
 	// URL to post info to
 	$tokenUrl = "https://canvas.granny.dev/login/oauth2/token";
@@ -61,8 +55,7 @@
                         'grant_type' => "client_credentials",
                         'client_assertion_type' => "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
                         'client_assertion' => $jwt,
-                        'scope' => "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly",
-						'redirect_uri' => $redirect_uri
+                        'scope' => "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly"
                     ];
 				$body =
 				    [
@@ -70,7 +63,24 @@
 				    ];
 
                 $body = json_encode($body);
-				$helpers::sendForm($tokenUrl, $tokenAssertion, $_COOKIE['targetLink'], $redirect_uri);
+
+                $response = $helpers::callAPI("POST", $tokenUrl, $tokenAssertion, null);
+                $response = json_decode($response, true);
+
+                if(isset($response['access_token']))
+                {
+                    /*TODO: make a helper function that takes in as many pieces of data for cookies as needed*/
+                    $helpers::setGoodCookie('LTI_access_token', $response['access_token'], '/');
+                    $helpers::setGoodCookie('LTI_token_type', $response['token_type'], '/');
+                    $helpers::setGoodCookie('LTI_token_expiration', $response['expires_in'], '/');
+                    $helpers::setGoodCookie('LTI_token_scope', $response['scope'], '/');
+
+                    header("Location: " . $_COOKIE['targetLink'], FALSE, 302);
+                    exit();
+                } else{
+                    die("Error: token not obtained!");
+                }
+
             } else
             {
                 die("ERROR. NO ID TOKEN!");
