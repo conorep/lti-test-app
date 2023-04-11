@@ -1,6 +1,6 @@
 {
     "require": {
-        "packbackbooks/lti-1p3-tool": "^5.3",
+        "firebase/php-jwt": "^v6.4.0",
         "ext-curl": "*",
         "ramsey/uuid": "^4.7"
     }
