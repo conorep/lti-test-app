@@ -6,10 +6,14 @@
     include __DIR__ . '/../helper/includeheaders.php';
 	include __DIR__ . '/../helper/helperfunctions.php';
     http_response_code(302);
-
-	// URL to post info to
-	//TODO: make this dynamic! no hard-coded URI.
-	$tokenUrl = "https://canvas.granny.dev/login/oauth2/token";
+	JWT::$leeway = 10;
+	
+	$issuer = trim(html_entity_decode($_COOKIE['issuer']));
+	
+	// Canvas JWK URL
+	$jwkUrl = $issuer . '/api/lti/security/jwks';
+	// oauth2 token URL
+	$tokenUrl = $issuer . '/login/oauth2/token';
 
 	if(isset($_COOKIE['stateParameter']))
 	{
@@ -25,9 +29,18 @@
                 $idToken = $_POST['id_token'];
                 $authToken = $_POST['authenticity_token'];
 				
-				//TODO: make this dynamic! no hard-coded URI.
-				$canvasJWKs = file_get_contents('https://canvas.granny.dev/api/lti/security/jwks');
+				$context = stream_context_create(['http' => [
+					'method'=>"GET",
+					'header'=>"Connection: close\r\n",
+					'timeout' => 5]
+				]);
+//				$canvasJWKs = file_get_contents($jwkUrl,false, $context);
+				/*CURRENTLY USING HARD-CODED PLACEHOLDER FILE DUE TO CODESPACE TIMEOUT AND PAVEL'S BROADCAST ISSUES*/
+				$canvasJWKs = file_get_contents('placeholderJWKs.json', false, $context);
+				//$canvasJWKs = file_get_contents($jwkUrl, false, $context);
+
 				$canvasJWKs = json_decode($canvasJWKs, true);
+				
 				try
 				{
 					$jwkArr = JWK::parseKeySet($canvasJWKs, 'RS256');
@@ -44,12 +57,7 @@
 					die();
 				}
 				
-				//Write action to txt log
-				$log  = "User: ".$_SERVER['REMOTE_ADDR'].' - '.date("F j, Y, g:i a").PHP_EOL.
-					"Data: ". print_r($jwkAssocArr, true) . ' ' . PHP_EOL .
-					'-------------------------' . PHP_EOL;
-				//-
-				file_put_contents('./log_'.date("j.n.Y").'.txt', $log, FILE_APPEND);
+				/*HelperFunctions::logData($jwkAssocArr);*/
 				
                 $clientID = $jwkAssocArr['aud'];
                 $payload = array
@@ -66,7 +74,9 @@
                 // THOUGHTS: could do whole oauth process up to authLogin with php, then have React handle the actual
                 //  send/receive of the info to get the token - i.e. php hands off the signed JWT to React to forward
                 //  to the oauth token Canvas URI
-				$getPrivKey = file_get_contents('../db_comms/keys/private.key');
+				$getPrivKey = file_get_contents('../keys/private.key');
+				
+				//TODO: make this dynamic
 				$jwt = JWT::encode($payload,  $getPrivKey, 'RS256', 'uniqueWhaleSongGP2023');
 				
                 $tokenAssertion =
@@ -81,9 +91,12 @@
 					    'form_params' => $tokenAssertion
 				    ];
 
-                $body = json_encode($body);
+//                $body = json_encode($body);
 
-                $response = HelperFunctions::callAPI("POST", $tokenUrl, $tokenAssertion, null);
+                $response = HelperFunctions::callAPI("POST", $tokenUrl, $tokenAssertion, [
+					'Accept: application/json',
+					'Content-Type: application/x-www-form-urlencoded'
+				]);
                 $response = json_decode($response, true);
 
                 if(isset($response['access_token']))
@@ -100,6 +113,7 @@
                     header("Location: " . $_COOKIE['targetLink'], FALSE, 302);
                     exit();
                 } else{
+					print_r($response);
                     die("Error: token not obtained!");
                 }
 
