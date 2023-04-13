@@ -11,7 +11,7 @@
 	$login_hint = $_POST['login_hint'] ?? die('ERROR - NO LOGIN HINT!');
 	$lti_message_hint = $_POST['lti_message_hint'] ?? die('ERROR - LTI MESSAGE HINT!');
 	
-	$issuer = $_POST['iss'] ?? die('ERROR - NO ISS!');
+	$issuer = $_POST['iss'] ?? die('ERROR - NO ISSUER!');
 	$authUrl = $issuer . '/api/lti/authorize_redirect';
 	
 	//TODO: make this dynamic (or tied to ENV)

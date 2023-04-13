@@ -6,6 +6,7 @@
     class HelperFunctions
     {
 
+        //TODO: make 'my domain' dynamic
         /**
          * An easier method for setting cookies to our domain.
          * @param string $cookieName yep, indeed! the name of the cookie.
