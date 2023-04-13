@@ -69,7 +69,7 @@
       }
     }
   ],
-  "public_jwk_url": "https://cobrien2.greenriverdev.com/whalesong/db_comms/keys/pubkey.json",
+  "public_jwk_url": "https://cobrien2.greenriverdev.com/whalesong/keys/pubkey.json",
   "custom_fields":{
     "canvas_course_id":"$Canvas.user.sisid"
   }
