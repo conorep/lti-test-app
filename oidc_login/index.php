@@ -2,22 +2,20 @@
     include __DIR__ . '/../helper/includeheaders.php';
     include __DIR__ . '/../helper/helperfunctions.php';
     http_response_code(302);
-
-	// USED WITH MY CODE SPACE
-	$authUrl = 'https://canvas.granny.dev/api/lti/authorize_redirect';
 	
-	//$authUrl = 'https://canvas.instructure.com/api/lti/authorize_redirect'; <--- auth url for production environs
-	//$authUrl = 'https://sso.canvaslms.com/api/lti/authorize_redirect'; <--- new auth url for production environs
-	// (have to use as of July 1s, 2023)
 	$stateParam = uniqid();
 	$nonceParam = uniqid();
-	
-	$redirect_uri = 'https://cobrien2.greenriverdev.com/whalesong/oidc_login/authLogin.php';
 
 	$client_id = $_POST['client_id'] ?? die('ERROR - NO CLIENT ID!');
 	$target_link_uri = $_POST['target_link_uri'] ?? die('ERROR - NO TARGET LINK URI!');
 	$login_hint = $_POST['login_hint'] ?? die('ERROR - NO LOGIN HINT!');
 	$lti_message_hint = $_POST['lti_message_hint'] ?? die('ERROR - LTI MESSAGE HINT!');
+	
+	$issuer = $_POST['iss'] ?? die('ERROR - NO ISS!');
+	$authUrl = $issuer . '/api/lti/authorize_redirect';
+	
+	//TODO: make this dynamic (or tied to ENV)
+	$redirect_uri = 'https://cobrien2.greenriverdev.com/whalesong/oidc_login/authLogin.php';
 	
 	$dataArgs =
 	'?scope=openid'.
@@ -33,7 +31,8 @@
 
     $authUrl .= $dataArgs;
 	
-	HelperFunctions::setGoodCookies([['stateParameter', $stateParam], ['nonceParameter', $nonceParam], ['clientId', $client_id]]);
+	HelperFunctions::setGoodCookies([['stateParameter', $stateParam], ['nonceParameter', $nonceParam],
+		['clientId', $client_id], ['issuer', $issuer]]);
 	if($target_link_uri != null)
     {
 		HelperFunctions::setGoodCookie('targetLink', $target_link_uri);
