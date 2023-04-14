@@ -50,8 +50,8 @@
          * @param $header array|null array of header info or null
          * @return bool|string|void
          */
-        public static function callAPI(string $method, string $url, mixed $data, ?array $header){
-			$timeout = 10;
+        public static function callAPI(string $method, string $url, ?array $data, ?array $header)
+		{
             $curl = curl_init();
             switch ($method){
                 case "POST":
@@ -71,8 +71,6 @@
 
             curl_setopt($curl, CURLOPT_URL, $url);
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($curl, CURLINFO_HEADER_OUT, 1);
-			curl_setopt($curl, CURLOPT_HEADER, 1);
             curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
 			
             if($header != null)
