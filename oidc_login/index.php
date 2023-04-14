@@ -11,8 +11,8 @@
 	$login_hint = $_POST['login_hint'] ?? die('ERROR - NO LOGIN HINT!');
 	$lti_message_hint = $_POST['lti_message_hint'] ?? die('ERROR - LTI MESSAGE HINT!');
 	
-	$issuer = $_POST['iss'] ?? die('ERROR - NO ISS!');
-	$authUrl = $issuer . '/api/lti/authorize_redirect';
+	$launchOrigin = $_SERVER['HTTP_ORIGIN'] ?? die('ERROR - NO ORIGIN!');
+	$authUrl = $launchOrigin . '/api/lti/authorize_redirect';
 	
 	//TODO: make this dynamic (or tied to ENV)
 	$redirect_uri = 'https://cobrien2.greenriverdev.com/whalesong/oidc_login/authLogin.php';
@@ -32,7 +32,7 @@
     $authUrl .= $dataArgs;
 	
 	HelperFunctions::setGoodCookies([['stateParameter', $stateParam], ['nonceParameter', $nonceParam],
-		['clientId', $client_id], ['issuer', $issuer]]);
+		['clientId', $client_id], ['origin', $launchOrigin]]);
 	if($target_link_uri != null)
     {
 		HelperFunctions::setGoodCookie('targetLink', $target_link_uri);
