@@ -6,14 +6,13 @@
     include __DIR__ . '/../helper/includeheaders.php';
 	include __DIR__ . '/../helper/helperfunctions.php';
     http_response_code(302);
-	JWT::$leeway = 10;
 	
-	$issuer = trim(html_entity_decode($_COOKIE['issuer']));
+	$launchOrigin = trim(html_entity_decode($_COOKIE['origin']));
 	
 	// Canvas JWK URL
-	$jwkUrl = $issuer . '/api/lti/security/jwks';
+	$jwkUrl = $launchOrigin . '/api/lti/security/jwks';
 	// oauth2 token URL
-	$tokenUrl = $issuer . '/login/oauth2/token';
+	$tokenUrl = $launchOrigin . '/login/oauth2/token';
 
 	if(isset($_COOKIE['stateParameter']))
 	{
@@ -34,10 +33,7 @@
 					'header'=>"Connection: close\r\n",
 					'timeout' => 5]
 				]);
-//				$canvasJWKs = file_get_contents($jwkUrl,false, $context);
-				/*CURRENTLY USING HARD-CODED PLACEHOLDER FILE DUE TO CODESPACE TIMEOUT AND PAVEL'S BROADCAST ISSUES*/
-				$canvasJWKs = file_get_contents('placeholderJWKs.json', false, $context);
-				//$canvasJWKs = file_get_contents($jwkUrl, false, $context);
+				$canvasJWKs = file_get_contents($jwkUrl);
 
 				$canvasJWKs = json_decode($canvasJWKs, true);
 				
@@ -86,17 +82,8 @@
                         'client_assertion' => $jwt,
                         'scope' => "https://purl.imsglobal.org/spec/lti-ags/scope/lineitem https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly"
                     ];
-				$body =
-				    [
-					    'form_params' => $tokenAssertion
-				    ];
 
-//                $body = json_encode($body);
-
-                $response = HelperFunctions::callAPI("POST", $tokenUrl, $tokenAssertion, [
-					'Accept: application/json',
-					'Content-Type: application/x-www-form-urlencoded'
-				]);
+                $response = HelperFunctions::callAPI("POST", $tokenUrl, $tokenAssertion, null);
                 $response = json_decode($response, true);
 
                 if(isset($response['access_token']))
@@ -112,7 +99,8 @@
 
                     header("Location: " . $_COOKIE['targetLink'], FALSE, 302);
                     exit();
-                } else{
+                } else
+				{
 					print_r($response);
                     die("Error: token not obtained!");
                 }
