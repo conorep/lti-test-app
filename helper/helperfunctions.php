@@ -6,7 +6,6 @@
     class HelperFunctions
     {
 
-        //TODO: make 'my domain' dynamic
         /**
          * An easier method for setting cookies to our domain.
          * @param string $cookieName yep, indeed! the name of the cookie.
@@ -16,9 +15,11 @@
          */
         public static function setGoodCookie(string $cookieName, string $cookieData, ?string $path = null): void
         {
+            //TODO: check for failures. what if this returns null? CAN it?
+            $domainName = $_SERVER['HTTP_HOST'];
             $options =
                 [
-                    'domain' => 'cobrien2.greenriverdev.com',
+                    'domain' => $domainName,
                     'secure' => true,
                     'samesite' => 'None'
                 ];

@@ -66,13 +66,9 @@
 						"jti" => $newUuid
                     );
 
-                //TODO: think about what the best practice is for ensuring that the private key stays private
-                // THOUGHTS: could do whole oauth process up to authLogin with php, then have React handle the actual
-                //  send/receive of the info to get the token - i.e. php hands off the signed JWT to React to forward
-                //  to the oauth token Canvas URI
 				$getPrivKey = file_get_contents('../keys/private.key');
 				
-				//TODO: make this dynamic
+				//TODO: make getKID dynamic
 				$jwt = JWT::encode($payload,  $getPrivKey, 'RS256', 'uniqueWhaleSongGP2023');
 				
                 $tokenAssertion =
